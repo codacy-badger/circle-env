@@ -31,6 +31,18 @@ func (c *CircleCIAPIClient) GetEnvs(cfg *domain.Config) (*domain.Envs, error) {
 		return nil, err
 	}
 
+	switch res.StatusCode {
+	case 200:
+	case 403:
+		return nil, domain.ErrPermissionDenied
+	case 404:
+		return nil, domain.ErrProjectNotFound
+	case 429:
+		return nil, domain.ErrTooManyRequests
+	default:
+		return nil, fmt.Errorf("request failed with status code %d\nBody: %s", res.StatusCode, string(res.Body))
+	}
+
 	es := new(domain.Envs)
 	if err := json.Unmarshal(res.Body, es); err != nil {
 		return nil, err
