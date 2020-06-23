@@ -16,6 +16,5 @@ func TestConfig_Ini_ReturnIniString(t *testing.T) {
 
 	assert.Equal(t, `vcs = github
 user = user
-repo = repo
-token = token`, c.Ini())
+repo = repo`, c.Ini())
 }

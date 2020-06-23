@@ -2,11 +2,18 @@ package gateways
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"gopkg.in/ini.v1"
 
 	"github.com/kou-pg-0131/circle-env/src/domain"
+)
+
+const (
+	DirPath    string = ".circle-env"
+	ConfigPath string = ".circle-env/config"
+	TokenPath  string = ".circle-env/circle-token"
 )
 
 type ConfigRepository struct{}
@@ -15,28 +22,39 @@ func NewConfigRepository() *ConfigRepository {
 	return &ConfigRepository{}
 }
 
-func (r *ConfigRepository) Save(c *domain.Config) error {
-	if err := os.MkdirAll(".circle-env", os.ModePerm); err != nil {
+func (r *ConfigRepository) Save(cfg *domain.Config) error {
+	if err := os.MkdirAll(DirPath, os.ModePerm); err != nil {
 		return err
 	}
 
-	f, err := os.Create(".circle-env/config")
+	c, err := os.Create(ConfigPath)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer c.Close()
 
-	_, err = f.Write([]byte(c.Ini()))
+	_, err = c.Write([]byte(cfg.Ini()))
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("created `.circle-env/config`.")
+	t, err := os.Create(TokenPath)
+	if err != nil {
+		return err
+	}
+	defer t.Close()
+
+	_, err = t.Write([]byte(cfg.Token))
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("\ncreated config files.\n  - `%s`\n  - `%s`\n", ConfigPath, TokenPath)
 	return nil
 }
 
 func (r *ConfigRepository) Get() (*domain.Config, error) {
-	i, err := ini.Load(".circle-env/config")
+	i, err := ini.Load(ConfigPath)
 	if err != nil {
 		return nil, err
 	}
@@ -46,9 +64,15 @@ func (r *ConfigRepository) Get() (*domain.Config, error) {
 		return nil, domain.ErrInvalidVCS
 	}
 
+	bs, err := ioutil.ReadFile(TokenPath)
+	if err != nil {
+		return nil, err
+	}
+	tkn := string(bs)
+
 	return &domain.Config{
 		VCS:   vcs,
-		Token: i.Section("").Key("token").String(),
+		Token: tkn,
 		Repo:  i.Section("").Key("repo").String(),
 		User:  i.Section("").Key("user").String(),
 	}, nil

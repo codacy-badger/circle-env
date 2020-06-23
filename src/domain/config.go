@@ -17,6 +17,5 @@ func (c *Config) Ini() string {
 		fmt.Sprintf("vcs = %s", c.VCS),
 		fmt.Sprintf("user = %s", c.User),
 		fmt.Sprintf("repo = %s", c.Repo),
-		fmt.Sprintf("token = %s", c.Token),
 	}, "\n")
 }
