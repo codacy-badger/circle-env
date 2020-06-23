@@ -19,14 +19,16 @@ func NewEnvsController(c gateways.IAPIClient) *EnvsController {
 	}
 }
 
-func (c *EnvsController) Show(j bool) {
+func (c *EnvsController) Show(j bool) error {
 	es, err := c.usecase.ShowAll()
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	p := presenters.NewEnvsPresenter(j)
 	if err := p.Print(es); err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/kou-pg-0131/circle-env/src/infrastructures"
 	"github.com/kou-pg-0131/circle-env/src/interfaces/controllers"
+	"github.com/kou-pg-0131/circle-env/src/utils"
 )
 
 func main() {
@@ -40,7 +41,9 @@ func main() {
 	case "init":
 		cc.Initialize()
 	case "show":
-		ec.Show(*j)
+		if err := ec.Show(*j); err != nil {
+			utils.Fatal(err)
+		}
 	default:
 		panic("usage") // TODO
 	}

@@ -36,9 +36,9 @@ func (u *ConfigUsecase) Initialize() error {
 		if (domain.VCS)(s).IsValid() {
 			vcs = (domain.VCS)(s)
 			break
-		} else {
-			fmt.Println("`github` or `bitbucket`")
 		}
+
+		fmt.Println("Please enter `github` or `bitbucket`.")
 	}
 
 	fmt.Print("User: ")
@@ -53,7 +53,7 @@ func (u *ConfigUsecase) Initialize() error {
 		return err
 	}
 
-	fmt.Print("Token: ")
+	fmt.Print("CircleCI API Token: ")
 	tkn, err := u.scanner.Scan()
 	if err != nil {
 		return err

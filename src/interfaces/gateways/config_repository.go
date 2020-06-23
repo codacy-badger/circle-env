@@ -54,6 +54,16 @@ func (r *ConfigRepository) Save(cfg *domain.Config) error {
 }
 
 func (r *ConfigRepository) Get() (*domain.Config, error) {
+	_, err := os.Stat(ConfigPath)
+	if err != nil {
+		return nil, fmt.Errorf("`%s` not found, run `circle-env init`", ConfigPath)
+	}
+
+	_, err = os.Stat(TokenPath)
+	if err != nil {
+		return nil, fmt.Errorf("`%s` not found, run `circle-env init`", TokenPath)
+	}
+
 	i, err := ini.Load(ConfigPath)
 	if err != nil {
 		return nil, err
@@ -61,7 +71,7 @@ func (r *ConfigRepository) Get() (*domain.Config, error) {
 
 	vcs := (domain.VCS)(i.Section("").Key("vcs").String())
 	if !vcs.IsValid() {
-		return nil, domain.ErrInvalidVCS
+		return nil, fmt.Errorf("`%s` is invalid vcs type, please check `.circle-env/config`", vcs)
 	}
 
 	bs, err := ioutil.ReadFile(TokenPath)

@@ -23,6 +23,11 @@ func NewEnvsPresenter(j bool) IEnvsPresenter {
 }
 
 func (p *PlainEnvsPresenter) Print(es *domain.Envs) error {
+	if len(*es) == 0 {
+		fmt.Println("No environment variables are set.")
+		return nil
+	}
+
 	for _, e := range *es {
 		fmt.Printf("%s = %s\n", e.Name, e.Value)
 	}
