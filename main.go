@@ -8,22 +8,39 @@ import (
 )
 
 func main() {
+	/*
+	 * args
+	 */
+
+	j := flag.Bool("json", false, "json") // TODO
 	flag.Parse()
 	args := flag.Args()
-	if len(args) != 1 {
+	if flag.NArg() != 1 {
 		panic("usage") // TODO
 	}
 
+	/*
+	 * infrastructures
+	 */
+
 	api := infrastructures.NewCircleCIAPIClient()
+
+	/*
+	 * controllers
+	 */
 
 	cc := controllers.NewConfigController()
 	ec := controllers.NewEnvsController(api)
+
+	/*
+	 * commands
+	 */
 
 	switch args[0] {
 	case "init":
 		cc.Initialize()
 	case "show":
-		ec.Show()
+		ec.Show(*j)
 	default:
 		panic("usage") // TODO
 	}

@@ -7,13 +7,11 @@ import (
 )
 
 type EnvsController struct {
-	usecase   usecases.IEnvsUsecase
-	presenter presenters.IEnvsPresenter
+	usecase usecases.IEnvsUsecase
 }
 
 func NewEnvsController(c gateways.IAPIClient) *EnvsController {
 	return &EnvsController{
-		presenter: presenters.NewEnvsPresenter(),
 		usecase: usecases.NewEnvsUsecase(&usecases.EnvsUsecaseOption{
 			EnvsRepository:   gateways.NewEnvsRepository(c),
 			ConfigRepository: gateways.NewConfigRepository(),
@@ -21,11 +19,14 @@ func NewEnvsController(c gateways.IAPIClient) *EnvsController {
 	}
 }
 
-func (c *EnvsController) Show() {
+func (c *EnvsController) Show(j bool) {
 	es, err := c.usecase.ShowAll()
 	if err != nil {
 		panic(err)
 	}
 
-	c.presenter.Print(es)
+	p := presenters.NewEnvsPresenter(j)
+	if err := p.Print(es); err != nil {
+		panic(err)
+	}
 }
