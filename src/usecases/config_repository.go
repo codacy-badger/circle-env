@@ -6,4 +6,5 @@ import (
 
 type IConfigRepository interface {
 	Save(c *domain.Config) error
+	Get() (*domain.Config, error)
 }

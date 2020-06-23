@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"gopkg.in/ini.v1"
+
 	"github.com/kou-pg-0131/circle-env/src/domain"
 )
 
@@ -31,4 +33,23 @@ func (r *ConfigRepository) Save(c *domain.Config) error {
 
 	fmt.Println("created `.circle-env/config`.")
 	return nil
+}
+
+func (r *ConfigRepository) Get() (*domain.Config, error) {
+	i, err := ini.Load(".circle-env/config")
+	if err != nil {
+		return nil, err
+	}
+
+	vcs := (domain.VCS)(i.Section("").Key("vcs").String())
+	if !vcs.IsValid() {
+		return nil, domain.ErrInvalidVCS
+	}
+
+	return &domain.Config{
+		VCS:   vcs,
+		Token: i.Section("").Key("token").String(),
+		Repo:  i.Section("").Key("repo").String(),
+		User:  i.Section("").Key("user").String(),
+	}, nil
 }
