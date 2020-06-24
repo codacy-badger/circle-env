@@ -36,9 +36,17 @@ func (r *EnvsRepository) Load() (*domain.Envs, error) {
 		return nil, errors.New("`.circle-env/.env` not found")
 	}
 
-	es, err := r.dotenv.Load(DotenvPath)
+	dot, err := r.dotenv.Load(DotenvPath)
 	if err != nil {
 		return nil, err
+	}
+
+	es := new(domain.Envs)
+
+	for _, e := range *dot {
+		if e.Value != "" {
+			*es = append(*es, e)
+		}
 	}
 
 	es.Sort()
