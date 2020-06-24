@@ -16,10 +16,6 @@ func main() {
 
 	opts := utils.NewOptions()
 
-	if opts.Help {
-		utils.Usage()
-	}
-
 	/*
 	 * infrastructures
 	 */
@@ -52,7 +48,7 @@ func main() {
 			fatal(err)
 		}
 	default:
-		utils.Usage()
+		utils.Usage.Print()
 	}
 }
 
