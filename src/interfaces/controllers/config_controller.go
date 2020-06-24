@@ -20,9 +20,6 @@ func NewConfigController() *ConfigController {
 	}
 }
 
-func (c *ConfigController) Initialize() {
-	err := c.usecase.Initialize()
-	if err != nil {
-		panic(err)
-	}
+func (c *ConfigController) Initialize() error {
+	return c.usecase.Initialize()
 }

@@ -19,3 +19,7 @@ func (c *Config) Ini() string {
 		fmt.Sprintf("repo = %s", c.Repo),
 	}, "\n")
 }
+
+func (c *Config) Slug() string {
+	return fmt.Sprintf("%s/%s/%s", c.VCS, c.User, c.Repo)
+}

@@ -25,13 +25,14 @@ func main() {
 	 */
 
 	api := infrastructures.NewCircleCIAPIClient()
+	de := infrastructures.NewDotenv()
 
 	/*
 	 * controllers
 	 */
 
 	cc := controllers.NewConfigController()
-	ec := controllers.NewEnvsController(api)
+	ec := controllers.NewEnvsController(api, de)
 
 	/*
 	 * commands
@@ -39,9 +40,15 @@ func main() {
 
 	switch args[0] {
 	case "init":
-		cc.Initialize()
+		if err := cc.Initialize(); err != nil {
+			utils.Fatal(err)
+		}
 	case "show":
 		if err := ec.Show(*j); err != nil {
+			utils.Fatal(err)
+		}
+	case "push":
+		if err := ec.Push(); err != nil {
 			utils.Fatal(err)
 		}
 	default:

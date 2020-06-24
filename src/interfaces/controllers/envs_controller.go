@@ -10,10 +10,10 @@ type EnvsController struct {
 	usecase usecases.IEnvsUsecase
 }
 
-func NewEnvsController(c gateways.IAPIClient) *EnvsController {
+func NewEnvsController(c gateways.IAPIClient, d gateways.IDotenv) *EnvsController {
 	return &EnvsController{
 		usecase: usecases.NewEnvsUsecase(&usecases.EnvsUsecaseOption{
-			EnvsRepository:   gateways.NewEnvsRepository(c),
+			EnvsRepository:   gateways.NewEnvsRepository(c, d),
 			ConfigRepository: gateways.NewConfigRepository(),
 		}),
 	}
@@ -31,4 +31,8 @@ func (c *EnvsController) Show(j bool) error {
 	}
 
 	return nil
+}
+
+func (c *EnvsController) Push() error {
+	return c.usecase.Push()
 }

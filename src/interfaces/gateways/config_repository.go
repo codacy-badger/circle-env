@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"gopkg.in/ini.v1"
 
@@ -78,7 +79,7 @@ func (r *ConfigRepository) Get() (*domain.Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	tkn := string(bs)
+	tkn := strings.TrimSpace(string(bs))
 
 	return &domain.Config{
 		VCS:   vcs,
