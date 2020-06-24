@@ -12,14 +12,12 @@ type IConfigUsecase interface {
 }
 
 type ConfigUsecase struct {
-	scanner    utils.IScanner
 	repository IConfigRepository
 }
 
 func NewConfigUsecase(r IConfigRepository) *ConfigUsecase {
 	return &ConfigUsecase{
 		repository: r,
-		scanner:    utils.NewScanner(),
 	}
 }
 
@@ -28,7 +26,7 @@ func (u *ConfigUsecase) Initialize() error {
 
 	for {
 		fmt.Print("VCS (`github` or `bitbucket`): ")
-		s, err := u.scanner.Scan()
+		s, err := utils.Scanner.Scan()
 		if err != nil {
 			return err
 		}
@@ -42,19 +40,19 @@ func (u *ConfigUsecase) Initialize() error {
 	}
 
 	fmt.Print("User: ")
-	user, err := u.scanner.Scan()
+	user, err := utils.Scanner.Scan()
 	if err != nil {
 		return err
 	}
 
 	fmt.Print("Repository: ")
-	repo, err := u.scanner.Scan()
+	repo, err := utils.Scanner.Scan()
 	if err != nil {
 		return err
 	}
 
 	fmt.Print("CircleCI API Token: ")
-	tkn, err := u.scanner.Scan()
+	tkn, err := utils.Scanner.Scan()
 	if err != nil {
 		return err
 	}

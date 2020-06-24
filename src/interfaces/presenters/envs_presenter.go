@@ -29,7 +29,7 @@ func (p *PlainEnvsPresenter) Print(es *domain.Envs) error {
 	}
 
 	for _, e := range *es {
-		fmt.Printf("%s = %s\n", e.Name, e.Value)
+		fmt.Printf("%s = \"%s\"\n", e.Name, e.Value)
 	}
 
 	return nil

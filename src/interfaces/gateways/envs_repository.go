@@ -26,6 +26,7 @@ func (r *EnvsRepository) All(cfg *domain.Config) (*domain.Envs, error) {
 		return nil, err
 	}
 
+	es.Sort()
 	return es, nil
 }
 
@@ -40,6 +41,7 @@ func (r *EnvsRepository) Load() (*domain.Envs, error) {
 		return nil, err
 	}
 
+	es.Sort()
 	return es, nil
 }
 

@@ -9,16 +9,14 @@ type IScanner interface {
 	Scan() (string, error)
 }
 
-type Scanner struct{}
+type scanner struct{}
 
-func NewScanner() *Scanner {
-	return new(Scanner)
-}
+var Scanner = new(scanner)
 
-func (s *Scanner) Scan() (string, error) {
+func (s *scanner) Scan() (string, error) {
 	scn := bufio.NewScanner(os.Stdin)
 	if !scn.Scan() {
-		panic(scn.Err())
+		return "", scn.Err()
 	}
 
 	return scn.Text(), nil

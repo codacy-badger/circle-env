@@ -6,23 +6,29 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEnvs_Has_ReturnTrue(t *testing.T) {
+func TestEnvs_Has(t *testing.T) {
 	es := &Envs{
 		{Name: "HOGE", Value: "PIYO"},
 		{Name: "FOO", Value: "BAR"},
 	}
 
-	e := &Env{Name: "HOGE", Value: "BAR"}
-
-	assert.Equal(t, true, es.Has(e))
+	assert.Equal(t, true, es.Has("HOGE"))
+	assert.Equal(t, true, es.Has("FOO"))
+	assert.Equal(t, false, es.Has("PIYO"))
+	assert.Equal(t, false, es.Has("BAR"))
 }
 
-func TestEnvs_Has_ReturnFalse(t *testing.T) {
+func TestEnvs_Sort(t *testing.T) {
 	es := &Envs{
-		{Name: "FOO", Value: "BAR"},
+		{Name: "BBB"},
+		{Name: "CCC"},
+		{Name: "AAA"},
 	}
 
-	e := &Env{Name: "HOGE", Value: "BAR"}
-
-	assert.Equal(t, false, es.Has(e))
+	es.Sort()
+	assert.Equal(t, &Envs{
+		{Name: "AAA"},
+		{Name: "BBB"},
+		{Name: "CCC"},
+	}, es)
 }
