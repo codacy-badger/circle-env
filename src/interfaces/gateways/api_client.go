@@ -7,5 +7,4 @@ import (
 type IAPIClient interface {
 	GetEnvs(cfg *domain.Config) (*domain.Envs, error)
 	CreateEnv(cfg *domain.Config, e *domain.Env) error
-	DeleteEnv(cfg *domain.Config, name string) error
 }

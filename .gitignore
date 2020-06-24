@@ -1,1 +1,7 @@
-.circle-env
+# circle-env
+.circle-env/.env
+.circle-env/circle-token
+
+# coverage
+cover.out
+cover.html

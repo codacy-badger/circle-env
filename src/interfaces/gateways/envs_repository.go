@@ -56,7 +56,3 @@ func (r *EnvsRepository) Load() (*domain.Envs, error) {
 func (r *EnvsRepository) Save(cfg *domain.Config, e *domain.Env) error {
 	return r.apiClient.CreateEnv(cfg, e)
 }
-
-func (r *EnvsRepository) Delete(cfg *domain.Config, name string) error {
-	return r.apiClient.DeleteEnv(cfg, name)
-}

@@ -102,5 +102,7 @@ func (u *EnvsUsecase) Sync() error {
 		}
 	}
 
+	fmt.Println(utils.Color("Completed!").Bold().String())
+
 	return nil
 }

@@ -18,6 +18,19 @@ func NewCircleCIAPIClient() *CircleCIAPIClient {
 	}
 }
 
+func (c *CircleCIAPIClient) handleRequestError(res *HttpResponse, cfg *domain.Config) error {
+	switch res.StatusCode {
+	case 200, 201:
+		return nil
+	case 403:
+		return errors.New("permission denied")
+	case 404:
+		return fmt.Errorf(`project not found: "%s"`, cfg.Slug())
+	default:
+		return fmt.Errorf("api request failed with status code %d: %s", res.StatusCode, string(res.Body))
+	}
+}
+
 func (c *CircleCIAPIClient) GetEnvs(cfg *domain.Config) (*domain.Envs, error) {
 	url := fmt.Sprintf(
 		"https://circleci.com/api/v1.1/project/%s/envvar?circle-token=%s",
@@ -30,14 +43,8 @@ func (c *CircleCIAPIClient) GetEnvs(cfg *domain.Config) (*domain.Envs, error) {
 		return nil, err
 	}
 
-	switch res.StatusCode {
-	case 200:
-	case 403:
-		return nil, errors.New("permission denied")
-	case 404:
-		return nil, fmt.Errorf(`project not found: "%s"`, cfg.Slug())
-	default:
-		return nil, fmt.Errorf("api request failed with status code %d\nBody: %s", res.StatusCode, string(res.Body))
+	if err := c.handleRequestError(res, cfg); err != nil {
+		return nil, err
 	}
 
 	es := new(domain.Envs)
@@ -65,28 +72,8 @@ func (c *CircleCIAPIClient) CreateEnv(cfg *domain.Config, e *domain.Env) error {
 		return err
 	}
 
-	if res.StatusCode != 201 {
-		return fmt.Errorf("api request failed with status code %d\nBody: %s", res.StatusCode, string(res.Body))
-	}
-
-	return nil
-}
-
-func (c *CircleCIAPIClient) DeleteEnv(cfg *domain.Config, name string) error {
-	url := fmt.Sprintf(
-		"https://circleci.com/api/v1.1/project/%s/envvar/%s?circle-token=%s",
-		cfg.Slug(),
-		name,
-		cfg.Token,
-	)
-
-	res, err := c.httpClient.Delete(url, map[string]string{"Accept": "application/json"})
-	if err != nil {
+	if err := c.handleRequestError(res, cfg); err != nil {
 		return err
-	}
-
-	if res.StatusCode != 200 {
-		return fmt.Errorf("api request failed with status code %d\nBody: %s", res.StatusCode, string(res.Body))
 	}
 
 	return nil
