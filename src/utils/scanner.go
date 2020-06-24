@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"os"
+	"strings"
 )
 
 type IScanner interface {
@@ -19,5 +20,5 @@ func (s *scanner) Scan() (string, error) {
 		return "", scn.Err()
 	}
 
-	return scn.Text(), nil
+	return strings.TrimSpace(scn.Text()), nil
 }

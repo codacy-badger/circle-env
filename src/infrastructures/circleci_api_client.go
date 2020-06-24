@@ -2,6 +2,7 @@ package infrastructures
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/kou-pg-0131/circle-env/src/domain"
@@ -29,7 +30,13 @@ func (c *CircleCIAPIClient) GetEnvs(cfg *domain.Config) (*domain.Envs, error) {
 		return nil, err
 	}
 
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200:
+	case 403:
+		return nil, errors.New("permission denied")
+	case 404:
+		return nil, fmt.Errorf(`project not found: "%s"`, cfg.Slug())
+	default:
 		return nil, fmt.Errorf("api request failed with status code %d\nBody: %s", res.StatusCode, string(res.Body))
 	}
 
