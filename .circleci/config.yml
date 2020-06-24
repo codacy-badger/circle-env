@@ -1,0 +1,32 @@
+version: 2.1
+
+orbs:
+  slack: circleci/slack@3.4.2
+
+executors:
+  go:
+    docker:
+      - image: golang:1.14.3
+        environment:
+          CGO_ENABLED: 0
+
+jobs:
+  go_test:
+    executor: go
+    steps:
+      - checkout
+      - run:
+          name: go vet
+          command: go vet ./src/...
+      - run:
+          name: go test
+          command: go test ./src/... -coverpkg ./src/... -coverprofile cover.out
+      - run:
+          name: report coverage to codecov
+          command: bash -c "bash <(curl -s https://codecov.io/bash)"
+      - slack/status
+
+workflows:
+  build:
+    jobs:
+      - go_test
