@@ -43,8 +43,8 @@ func main() {
 		if err := ec.Show(opts.JSON); err != nil {
 			fatal(err)
 		}
-	case utils.Push:
-		if err := ec.Push(); err != nil {
+	case utils.Sync:
+		if err := ec.Sync(); err != nil {
 			fatal(err)
 		}
 	default:

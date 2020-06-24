@@ -33,6 +33,6 @@ func (c *EnvsController) Show(j bool) error {
 	return nil
 }
 
-func (c *EnvsController) Push() error {
-	return c.usecase.Push()
+func (c *EnvsController) Sync() error {
+	return c.usecase.Sync()
 }

@@ -8,7 +8,7 @@ import (
 const (
 	initDescription = "Interactively create the required configuration files."
 	showDescription = "Output a list of environment variables set in the circleci project."
-	pushDescription = "Syncs the value of `.circle-env/.env` with the environment variables of the circleci project."
+	syncDescription = "Syncs the value of `.circle-env/.env` with the environment variables of the circleci project."
 )
 
 type usage struct{}
@@ -24,8 +24,8 @@ func (u *usage) Print(cmd ...Command) {
 			u.printInitUsage()
 		case Show:
 			u.printShowUsage()
-		case Push:
-			u.printPushUsage()
+		case Sync:
+			u.printSyncUsage()
 		}
 	}
 
@@ -39,8 +39,8 @@ func (u *usage) printBasicUsage() {
 Commands:
   init     %s
   show     %s
-  push     %s
-`, initDescription, showDescription, pushDescription)
+  sync     %s
+`, initDescription, showDescription, syncDescription)
 }
 
 func (u *usage) printInitUsage() {
@@ -60,9 +60,9 @@ Options:
 `, showDescription)
 }
 
-func (u *usage) printPushUsage() {
-	fmt.Printf(`Usage: circle-env push
+func (u *usage) printSyncUsage() {
+	fmt.Printf(`Usage: circle-env sync
 
   %s
-`, pushDescription)
+`, syncDescription)
 }

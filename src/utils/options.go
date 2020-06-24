@@ -10,12 +10,12 @@ type Command string
 const (
 	Init Command = "init"
 	Show         = "show"
-	Push         = "push"
+	Sync         = "sync"
 )
 
 func commandFromString(s string) (Command, error) {
 	switch s {
-	case "init", "show", "push":
+	case "init", "show", "sync":
 		return (Command)(s), nil
 	default:
 		return "", errors.New("invalid command")

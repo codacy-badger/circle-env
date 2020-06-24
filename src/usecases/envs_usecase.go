@@ -10,7 +10,7 @@ import (
 
 type IEnvsUsecase interface {
 	ShowAll() (*domain.Envs, error)
-	Push() error
+	Sync() error
 }
 
 type EnvsUsecase struct {
@@ -44,7 +44,7 @@ func (u *EnvsUsecase) ShowAll() (*domain.Envs, error) {
 	return es, nil
 }
 
-func (u *EnvsUsecase) Push() error {
+func (u *EnvsUsecase) Sync() error {
 	cfg, err := u.configRepository.Get()
 	if err != nil {
 		return err
