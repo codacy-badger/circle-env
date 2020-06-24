@@ -2,10 +2,11 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"os"
 
 	"github.com/kou-pg-0131/circle-env/src/infrastructures"
 	"github.com/kou-pg-0131/circle-env/src/interfaces/controllers"
-	"github.com/kou-pg-0131/circle-env/src/utils"
 )
 
 func main() {
@@ -41,17 +42,22 @@ func main() {
 	switch args[0] {
 	case "init":
 		if err := cc.Initialize(); err != nil {
-			utils.Fatal(err)
+			fatal(err)
 		}
 	case "show":
 		if err := ec.Show(*j); err != nil {
-			utils.Fatal(err)
+			fatal(err)
 		}
 	case "push":
 		if err := ec.Push(); err != nil {
-			utils.Fatal(err)
+			fatal(err)
 		}
 	default:
 		panic("usage") // TODO
 	}
+}
+
+func fatal(err error) {
+	fmt.Println("Error:", err)
+	os.Exit(1)
 }
