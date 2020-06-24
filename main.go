@@ -1,12 +1,12 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 
 	"github.com/kou-pg-0131/circle-env/src/infrastructures"
 	"github.com/kou-pg-0131/circle-env/src/interfaces/controllers"
+	"github.com/kou-pg-0131/circle-env/src/utils"
 )
 
 func main() {
@@ -14,11 +14,10 @@ func main() {
 	 * args
 	 */
 
-	j := flag.Bool("json", false, "json") // TODO
-	flag.Parse()
-	args := flag.Args()
-	if flag.NArg() != 1 {
-		panic("usage") // TODO
+	opts := utils.NewOptions()
+
+	if opts.Help {
+		utils.Usage()
 	}
 
 	/*
@@ -39,21 +38,21 @@ func main() {
 	 * commands
 	 */
 
-	switch args[0] {
-	case "init":
+	switch opts.Command {
+	case utils.Init:
 		if err := cc.Initialize(); err != nil {
 			fatal(err)
 		}
-	case "show":
-		if err := ec.Show(*j); err != nil {
+	case utils.Show:
+		if err := ec.Show(opts.JSON); err != nil {
 			fatal(err)
 		}
-	case "push":
+	case utils.Push:
 		if err := ec.Push(); err != nil {
 			fatal(err)
 		}
 	default:
-		panic("usage") // TODO
+		utils.Usage()
 	}
 }
 
