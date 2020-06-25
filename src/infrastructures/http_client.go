@@ -9,6 +9,7 @@ import (
 type IHttpClient interface {
 	Get(url string, header map[string]string) (*HttpResponse, error)
 	Post(url string, header map[string]string, body []byte) (*HttpResponse, error)
+	Delete(url string, header map[string]string) (*HttpResponse, error)
 }
 
 type HttpResponse struct {
@@ -61,4 +62,8 @@ func (c *HttpClient) Get(url string, header map[string]string) (*HttpResponse, e
 
 func (c *HttpClient) Post(url string, header map[string]string, body []byte) (*HttpResponse, error) {
 	return c.request("POST", url, header, body)
+}
+
+func (c *HttpClient) Delete(url string, header map[string]string) (*HttpResponse, error) {
+	return c.request("DELETE", url, header, nil)
 }

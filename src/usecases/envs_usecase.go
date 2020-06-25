@@ -10,7 +10,7 @@ import (
 
 type IEnvsUsecase interface {
 	ShowAll() (*domain.Envs, error)
-	Sync() error
+	Sync(del bool) error
 }
 
 type EnvsUsecase struct {
@@ -44,7 +44,7 @@ func (u *EnvsUsecase) ShowAll() (*domain.Envs, error) {
 	return es, nil
 }
 
-func (u *EnvsUsecase) Sync() error {
+func (u *EnvsUsecase) Sync(del bool) error {
 	cfg, err := u.configRepository.Get()
 	if err != nil {
 		return err
@@ -60,21 +60,27 @@ func (u *EnvsUsecase) Sync() error {
 		return err
 	}
 
-	ds := curs.Compare(es)
+	ds := curs.Compare(es, del)
 	for _, d := range *ds {
 		switch d.Status {
 		case domain.NotChanged:
 			fmt.Printf("%s = \"%s\"\n", d.Name, d.Before.Value)
+		case domain.Deleted:
+			fmt.Printf(
+				"%s%s\n",
+				utils.Colorf("- %s = \"%s\" -> ", d.Name, d.Before.Value).Red().Bold().String(),
+				utils.Colorf("null").Secondary().String(),
+			)
 		case domain.Changed:
-			fmt.Print(utils.Colorf(
-				"~ %s = \"%s\" -> \"%s\"\n",
+			fmt.Println(utils.Colorf(
+				"~ %s = \"%s\" -> \"%s\"",
 				d.Name,
 				d.Before.Value,
 				d.After.Value,
 			).Green().Bold().String())
 		case domain.Added:
-			fmt.Printf(utils.Colorf(
-				"+ %s = \"%s\"\n",
+			fmt.Println(utils.Colorf(
+				"+ %s = \"%s\"",
 				d.Name,
 				d.After.Value,
 			).Green().Bold().String())
@@ -90,15 +96,23 @@ func (u *EnvsUsecase) Sync() error {
 		return errors.New("cancelled")
 	}
 
-	for _, e := range *es {
-		if curs.Has(e.Name) {
-			fmt.Printf("Saving `%s`...\n", e.Name)
-		} else {
-			fmt.Printf("Creating `%s`...\n", e.Name)
-		}
-
-		if err := u.envsRepository.Save(cfg, e); err != nil {
-			return err
+	for _, d := range *ds {
+		switch d.Status {
+		case domain.Added:
+			fmt.Printf("Creating `%s`...\n", d.Name)
+			if err := u.envsRepository.Save(cfg, d.After); err != nil {
+				return err
+			}
+		case domain.Changed:
+			fmt.Printf("Modifying `%s`...\n", d.Name)
+			if err := u.envsRepository.Save(cfg, d.After); err != nil {
+				return err
+			}
+		case domain.Deleted:
+			fmt.Printf("Deleting `%s`...\n", d.Name)
+			if err := u.envsRepository.Delete(cfg, d.Name); err != nil {
+				return err
+			}
 		}
 	}
 

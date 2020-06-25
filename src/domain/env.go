@@ -33,7 +33,7 @@ func (es *Envs) Sort() {
 	sort.SliceStable(*es, func(i, j int) bool { return (*es)[i].Name < (*es)[j].Name })
 }
 
-func (es *Envs) Compare(comp *Envs) *Diffs {
+func (es *Envs) Compare(comp *Envs, del bool) *Diffs {
 	ds := new(Diffs)
 
 	for _, c := range *comp {
@@ -46,7 +46,11 @@ func (es *Envs) Compare(comp *Envs) *Diffs {
 
 	for _, e := range *es {
 		if !comp.Has(e.Name) {
-			*ds = append(*ds, &Diff{NotChanged, e.Name, e, nil})
+			if del {
+				*ds = append(*ds, &Diff{Deleted, e.Name, e, nil})
+			} else {
+				*ds = append(*ds, &Diff{NotChanged, e.Name, e, nil})
+			}
 		}
 	}
 
@@ -61,6 +65,7 @@ const (
 	NotChanged
 	Added
 	Changed
+	Deleted
 )
 
 type Diff struct {

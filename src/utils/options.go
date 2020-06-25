@@ -27,6 +27,7 @@ type options struct {
 	Version bool
 	Command Command
 	JSON    bool
+	Delete  bool
 }
 
 func NewOptions() *options {
@@ -50,6 +51,8 @@ func NewOptions() *options {
 			}
 		case "--json":
 			opts.JSON = true
+		case "--delete":
+			opts.Delete = true
 		}
 	}
 
@@ -58,8 +61,16 @@ func NewOptions() *options {
 		os.Exit(0)
 	}
 
+	cmd, err := commandFromString(args[1])
+	if err != nil {
+		PrintUsage()
+		os.Exit(1)
+	}
+
+	opts.Command = cmd
+
 	if opts.Help {
-		PrintUsage((Command)(args[1]))
+		PrintUsage(opts.Command)
 		os.Exit(1)
 	}
 

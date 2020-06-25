@@ -22,6 +22,14 @@ func (c *color) Bold() *color {
 	return &color{str: fmt.Sprintf("\x1b[1m%s", c.str)}
 }
 
+func (c *color) Secondary() *color {
+	return &color{str: fmt.Sprintf("\x1b[2m%s", c.str)}
+}
+
 func (c *color) Green() *color {
 	return &color{str: fmt.Sprintf("\x1b[32m%s", c.str)}
+}
+
+func (c *color) Red() *color {
+	return &color{str: fmt.Sprintf("\x1b[31m%s", c.str)}
 }

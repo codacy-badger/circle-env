@@ -78,3 +78,23 @@ func (c *CircleCIAPIClient) CreateEnv(cfg *domain.Config, e *domain.Env) error {
 
 	return nil
 }
+
+func (c *CircleCIAPIClient) DeleteEnv(cfg *domain.Config, name string) error {
+	url := fmt.Sprintf(
+		"https://circleci.com/api/v1.1/project/%s/envvar/%s?circle-token=%s",
+		cfg.Slug(),
+		name,
+		cfg.Token,
+	)
+
+	res, err := c.httpClient.Delete(url, map[string]string{"Content-Type": "application/json", "Accept": "application/json"})
+	if err != nil {
+		return err
+	}
+
+	if err := c.handleRequestError(res, cfg); err != nil {
+		return err
+	}
+
+	return nil
+}

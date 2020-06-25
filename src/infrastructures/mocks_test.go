@@ -17,3 +17,8 @@ func (m *mockHttpClient) Post(url string, header map[string]string, body []byte)
 	args := m.Called(url, header, body)
 	return args.Get(0).(*HttpResponse), args.Error(1)
 }
+
+func (m *mockHttpClient) Delete(url string, header map[string]string) (*HttpResponse, error) {
+	args := m.Called(url, header)
+	return args.Get(0).(*HttpResponse), args.Error(1)
+}
