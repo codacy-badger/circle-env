@@ -48,7 +48,8 @@ func main() {
 			fatal(err)
 		}
 	default:
-		utils.Usage.Print()
+		utils.PrintUsage()
+		os.Exit(1)
 	}
 }
 

@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"os"
 )
 
 const (
@@ -13,27 +12,26 @@ const (
 
 type usage struct{}
 
-var Usage = new(usage)
-
-func (u *usage) Print(cmd ...Command) {
+func PrintUsage(cmd ...Command) {
 	if cmd == nil {
-		u.printBasicUsage()
+		printBasicUsage()
 	} else {
 		switch cmd[0] {
 		case Init:
-			u.printInitUsage()
+			printInitUsage()
 		case Show:
-			u.printShowUsage()
+			printShowUsage()
 		case Sync:
-			u.printSyncUsage()
+			printSyncUsage()
+		default:
+			printBasicUsage()
 		}
 	}
 
 	fmt.Println("")
-	os.Exit(1)
 }
 
-func (u *usage) printBasicUsage() {
+func printBasicUsage() {
 	fmt.Printf(`Usage: circle-env <command> [options]
 
 Commands:
@@ -43,14 +41,14 @@ Commands:
 `, initDescription, showDescription, syncDescription)
 }
 
-func (u *usage) printInitUsage() {
+func printInitUsage() {
 	fmt.Printf(`Usage: circle-env init
 
   %s
 `, initDescription)
 }
 
-func (u *usage) printShowUsage() {
+func printShowUsage() {
 	fmt.Printf(`Usage: circle-env show [options]
 
   %s
@@ -60,7 +58,7 @@ Options:
 `, showDescription)
 }
 
-func (u *usage) printSyncUsage() {
+func printSyncUsage() {
 	fmt.Printf(`Usage: circle-env sync
 
   %s

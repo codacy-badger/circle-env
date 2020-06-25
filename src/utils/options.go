@@ -23,33 +23,44 @@ func commandFromString(s string) (Command, error) {
 }
 
 type options struct {
+	Help    bool
+	Version bool
 	Command Command
 	JSON    bool
 }
 
 func NewOptions() *options {
+	args := os.Args
 	opts := new(options)
 
-	if len(os.Args) < 2 {
-		Usage.Print()
+	if len(args) < 2 {
+		PrintUsage()
+		os.Exit(1)
 	}
 
-	cmd, err := commandFromString(os.Args[1])
-	if err != nil {
-		Usage.Print()
-	}
-	opts.Command = cmd
-
-	for _, arg := range os.Args {
+	for _, arg := range args {
 		switch arg {
 		case "-h", "--help":
-			Usage.Print(opts.Command)
-		case "--json":
-			if opts.Command != Show {
-				Usage.Print()
+			if opts.Version == false {
+				opts.Help = true
 			}
+		case "-v", "--version":
+			if opts.Help == false {
+				opts.Version = true
+			}
+		case "--json":
 			opts.JSON = true
 		}
+	}
+
+	if opts.Version {
+		PrintVersion()
+		os.Exit(0)
+	}
+
+	if opts.Help {
+		PrintUsage((Command)(args[1]))
+		os.Exit(1)
 	}
 
 	return opts
