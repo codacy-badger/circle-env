@@ -2,8 +2,6 @@ package gateways
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
 	"strings"
 
 	"gopkg.in/ini.v1"
@@ -17,18 +15,20 @@ const (
 	TokenPath  string = ".circle-env/circle-token"
 )
 
-type ConfigRepository struct{}
+type ConfigRepository struct {
+	fs IFileSystem
+}
 
-func NewConfigRepository() *ConfigRepository {
-	return &ConfigRepository{}
+func NewConfigRepository(fs IFileSystem) *ConfigRepository {
+	return &ConfigRepository{fs: fs}
 }
 
 func (r *ConfigRepository) Save(cfg *domain.Config) error {
-	if err := os.MkdirAll(DirPath, os.ModePerm); err != nil {
+	if err := r.fs.Mkdir(DirPath); err != nil {
 		return err
 	}
 
-	c, err := os.Create(ConfigPath)
+	c, err := r.fs.Create(ConfigPath)
 	if err != nil {
 		return err
 	}
@@ -39,7 +39,7 @@ func (r *ConfigRepository) Save(cfg *domain.Config) error {
 		return err
 	}
 
-	t, err := os.Create(TokenPath)
+	t, err := r.fs.Create(TokenPath)
 	if err != nil {
 		return err
 	}
@@ -55,36 +55,40 @@ func (r *ConfigRepository) Save(cfg *domain.Config) error {
 }
 
 func (r *ConfigRepository) Get() (*domain.Config, error) {
-	_, err := os.Stat(ConfigPath)
-	if err != nil {
+	if !r.fs.IsExists(ConfigPath) {
 		return nil, fmt.Errorf("`%s` not found, run `circle-env init`", ConfigPath)
 	}
 
-	_, err = os.Stat(TokenPath)
-	if err != nil {
+	if !r.fs.IsExists(TokenPath) {
 		return nil, fmt.Errorf("`%s` not found, run `circle-env init`", TokenPath)
 	}
 
-	i, err := ini.Load(ConfigPath)
+	cbs, err := r.fs.Read(ConfigPath)
 	if err != nil {
 		return nil, err
 	}
 
-	vcs := (domain.VCS)(i.Section("").Key("vcs").String())
-	if !vcs.IsValid() {
-		return nil, fmt.Errorf("`%s` is invalid vcs type, please check `.circle-env/config`", vcs)
-	}
-
-	bs, err := ioutil.ReadFile(TokenPath)
+	i, err := ini.Load(cbs)
 	if err != nil {
 		return nil, err
 	}
-	tkn := strings.TrimSpace(string(bs))
+
+	v := i.Section("").Key("vcs").String()
+	vcs, err := domain.VCSFromString(v)
+	if err != nil {
+		return nil, fmt.Errorf("`%s` is invalid vcs type, please check `%s`", v, ConfigPath)
+	}
+
+	tbs, err := r.fs.Read(TokenPath)
+	if err != nil {
+		return nil, err
+	}
+	tkn := strings.TrimSpace(string(tbs))
 
 	return &domain.Config{
 		VCS:   vcs,
-		Token: tkn,
-		Repo:  i.Section("").Key("repo").String(),
 		User:  i.Section("").Key("user").String(),
+		Repo:  i.Section("").Key("repo").String(),
+		Token: tkn,
 	}, nil
 }

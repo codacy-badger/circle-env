@@ -9,10 +9,10 @@ type ConfigController struct {
 	usecase usecases.IConfigUsecase
 }
 
-func NewConfigController() *ConfigController {
+func NewConfigController(fs gateways.IFileSystem) *ConfigController {
 	return &ConfigController{
 		usecase: usecases.NewConfigUsecase(
-			gateways.NewConfigRepository(),
+			gateways.NewConfigRepository(fs),
 		),
 	}
 }

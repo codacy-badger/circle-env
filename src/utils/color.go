@@ -2,34 +2,38 @@ package utils
 
 import "fmt"
 
-type color struct {
+type Color struct {
 	str string
 }
 
-func Color(s string) *color {
-	return &color{str: s}
+func (c *Color) color(code int, s string) string {
+	return fmt.Sprintf("\x1b[%dm%s", code, s)
 }
 
-func Colorf(format string, v ...interface{}) *color {
-	return &color{str: fmt.Sprintf(format, v...)}
+func (c *Color) clear() *Color {
+	return &Color{str: fmt.Sprintf("%s\x1b[0m", c.str)}
 }
 
-func (c *color) String() string {
-	return fmt.Sprintf("%s\x1b[0m", c.str)
+func Colorf(format string, v ...interface{}) *Color {
+	return &Color{str: fmt.Sprintf(format, v...)}
 }
 
-func (c *color) Bold() *color {
-	return &color{str: fmt.Sprintf("\x1b[1m%s", c.str)}
+func (c *Color) String() string {
+	return c.clear().str
 }
 
-func (c *color) Secondary() *color {
-	return &color{str: fmt.Sprintf("\x1b[2m%s", c.str)}
+func (c *Color) Bold() *Color {
+	return &Color{str: c.color(1, c.str)}
 }
 
-func (c *color) Green() *color {
-	return &color{str: fmt.Sprintf("\x1b[32m%s", c.str)}
+func (c *Color) Secondary() *Color {
+	return &Color{str: c.color(2, c.str)}
 }
 
-func (c *color) Red() *color {
-	return &color{str: fmt.Sprintf("\x1b[31m%s", c.str)}
+func (c *Color) Green() *Color {
+	return &Color{str: c.color(32, c.str)}
+}
+
+func (c *Color) Red() *Color {
+	return &Color{str: c.color(31, c.str)}
 }

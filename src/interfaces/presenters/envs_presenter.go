@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/kou-pg-0131/circle-env/src/domain"
 )
 
 type IEnvsPresenter interface {
-	Print(es *domain.Envs) error
+	String(es *domain.Envs) (string, error)
 }
 
 type PlainEnvsPresenter struct{}
@@ -22,33 +23,31 @@ func NewEnvsPresenter(j bool) IEnvsPresenter {
 	}
 }
 
-func (p *PlainEnvsPresenter) Print(es *domain.Envs) error {
+func (p *PlainEnvsPresenter) String(es *domain.Envs) (string, error) {
 	if len(*es) == 0 {
-		fmt.Println("No environment variables are set.")
-		return nil
+		return "no environment variables are set.", nil
 	}
 
+	ss := []string{}
 	for _, e := range *es {
-		fmt.Printf("%s = \"%s\"\n", e.Name, e.Value)
+		ss = append(ss, fmt.Sprintf("%s = \"%s\"", e.Name, e.Value))
 	}
 
-	return nil
+	return strings.Join(ss, "\n"), nil
 }
 
 type JSONEnvsPresenter struct{}
 
-func (p *JSONEnvsPresenter) Print(es *domain.Envs) error {
+func (p *JSONEnvsPresenter) String(es *domain.Envs) (string, error) {
 	bs, err := json.Marshal(es)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	buf := new(bytes.Buffer)
 	if err = json.Indent(buf, bs, "", "  "); err != nil {
-		return err
+		return "", err
 	}
 
-	fmt.Println(buf.String())
-
-	return nil
+	return buf.String(), nil
 }

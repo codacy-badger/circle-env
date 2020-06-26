@@ -1,8 +1,7 @@
 package gateways
 
 import (
-	"errors"
-	"os"
+	"fmt"
 
 	"github.com/kou-pg-0131/circle-env/src/domain"
 )
@@ -12,12 +11,13 @@ const (
 )
 
 type EnvsRepository struct {
+	fs        IFileSystem
 	dotenv    IDotenv
 	apiClient IAPIClient
 }
 
-func NewEnvsRepository(c IAPIClient, d IDotenv) *EnvsRepository {
-	return &EnvsRepository{apiClient: c, dotenv: d}
+func NewEnvsRepository(c IAPIClient, fs IFileSystem, d IDotenv) *EnvsRepository {
+	return &EnvsRepository{apiClient: c, fs: fs, dotenv: d}
 }
 
 func (r *EnvsRepository) All(cfg *domain.Config) (*domain.Envs, error) {
@@ -26,14 +26,12 @@ func (r *EnvsRepository) All(cfg *domain.Config) (*domain.Envs, error) {
 		return nil, err
 	}
 
-	es.Sort()
 	return es, nil
 }
 
 func (r *EnvsRepository) Load() (*domain.Envs, error) {
-	_, err := os.Stat(DotenvPath)
-	if err != nil {
-		return nil, errors.New("`.circle-env/.env` not found")
+	if !r.fs.IsExists(DotenvPath) {
+		return nil, fmt.Errorf("`%s` not found", DotenvPath)
 	}
 
 	dot, err := r.dotenv.Load(DotenvPath)
@@ -42,14 +40,12 @@ func (r *EnvsRepository) Load() (*domain.Envs, error) {
 	}
 
 	es := new(domain.Envs)
-
 	for _, e := range *dot {
 		if e.Value != "" {
 			*es = append(*es, e)
 		}
 	}
 
-	es.Sort()
 	return es, nil
 }
 

@@ -6,17 +6,23 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_IsValid_ReturnTrueWhenValid(t *testing.T) {
-	vs := []VCS{
-		"github",
-		"bitbucket",
+func Test_VCSFromString_ReturnVCS(t *testing.T) {
+	testCases := []struct {
+		str      string
+		expected VCS
+	}{
+		{"github", GitHub},
+		{"bitbucket", BitBucket},
 	}
 
-	for _, v := range vs {
-		assert.Equal(t, true, v.IsValid())
+	for _, c := range testCases {
+		vcs, err := VCSFromString(c.str)
+		assert.Equal(t, c.expected, vcs)
+		assert.Nil(t, err)
 	}
 }
 
-func Test_IsValid_ReturnFalseWhenInvalid(t *testing.T) {
-	assert.Equal(t, false, (VCS)("INVALID_VCS").IsValid())
+func Test_VCSFromString_ReturnErrorWhenInvalidVCSType(t *testing.T) {
+	_, err := VCSFromString("INVALID_VCS_TYPE")
+	assert.EqualError(t, err, "invalid vcs type")
 }

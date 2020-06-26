@@ -27,8 +27,6 @@ func PrintUsage(cmd ...Command) {
 			printBasicUsage()
 		}
 	}
-
-	fmt.Println("")
 }
 
 func printBasicUsage() {

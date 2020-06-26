@@ -20,6 +20,7 @@ func main() {
 	 * infrastructures
 	 */
 
+	fs := infrastructures.NewFileSystem()
 	api := infrastructures.NewCircleCIAPIClient()
 	de := infrastructures.NewDotenv()
 
@@ -27,8 +28,8 @@ func main() {
 	 * controllers
 	 */
 
-	cc := controllers.NewConfigController()
-	ec := controllers.NewEnvsController(api, de)
+	cc := controllers.NewConfigController(fs)
+	ec := controllers.NewEnvsController(api, fs, de)
 
 	/*
 	 * commands

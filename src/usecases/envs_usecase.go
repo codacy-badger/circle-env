@@ -64,31 +64,31 @@ func (u *EnvsUsecase) Sync(del bool) error {
 	for _, d := range *ds {
 		switch d.Status {
 		case domain.NotChanged:
-			fmt.Printf("%s = \"%s\"\n", d.Name, d.Before.Value)
+			fmt.Printf("%s = \"%s\"\n", d.Name, d.Before)
 		case domain.Deleted:
 			fmt.Printf(
 				"%s%s\n",
-				utils.Colorf("- %s = \"%s\" -> ", d.Name, d.Before.Value).Red().Bold().String(),
+				utils.Colorf("- %s = \"%s\" -> ", d.Name, d.Before).Red().Bold().String(),
 				utils.Colorf("null").Secondary().String(),
 			)
 		case domain.Changed:
 			fmt.Println(utils.Colorf(
 				"~ %s = \"%s\" -> \"%s\"",
 				d.Name,
-				d.Before.Value,
-				d.After.Value,
+				d.Before,
+				d.After,
 			).Green().Bold().String())
 		case domain.Added:
 			fmt.Println(utils.Colorf(
 				"+ %s = \"%s\"",
 				d.Name,
-				d.After.Value,
+				d.After,
 			).Green().Bold().String())
 		}
 	}
 
 	fmt.Println("")
-	yes, err := utils.Confirm(utils.Color("Continue?(yes/no): ").Bold().String())
+	yes, err := utils.Confirm(utils.Colorf("Continue?(yes/no): ").Bold().String())
 	if err != nil {
 		return err
 	}
@@ -100,12 +100,12 @@ func (u *EnvsUsecase) Sync(del bool) error {
 		switch d.Status {
 		case domain.Added:
 			fmt.Printf("Creating `%s`...\n", d.Name)
-			if err := u.envsRepository.Save(cfg, d.After); err != nil {
+			if err := u.envsRepository.Save(cfg, &domain.Env{Name: d.Name, Value: d.After}); err != nil {
 				return err
 			}
 		case domain.Changed:
 			fmt.Printf("Modifying `%s`...\n", d.Name)
-			if err := u.envsRepository.Save(cfg, d.After); err != nil {
+			if err := u.envsRepository.Save(cfg, &domain.Env{Name: d.Name, Value: d.After}); err != nil {
 				return err
 			}
 		case domain.Deleted:
@@ -116,7 +116,7 @@ func (u *EnvsUsecase) Sync(del bool) error {
 		}
 	}
 
-	fmt.Println(utils.Color("Completed!").Bold().String())
+	fmt.Println(utils.Colorf("Completed!").Bold().String())
 
 	return nil
 }

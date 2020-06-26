@@ -22,7 +22,7 @@ func Test_NewCircleCIAPIClient(t *testing.T) {
  */
 
 func TestCircleCIAPIClient_GetEnvs_ReturnEnvs(t *testing.T) {
-	expectedEnvs := &domain.Envs{
+	expected := &domain.Envs{
 		{Name: "NAME", Value: "VALUE"},
 	}
 
@@ -41,7 +41,7 @@ func TestCircleCIAPIClient_GetEnvs_ReturnEnvs(t *testing.T) {
 	c := &CircleCIAPIClient{httpClient: h}
 
 	es, err := c.GetEnvs(cfg)
-	assert.Equal(t, expectedEnvs, es)
+	assert.Equal(t, expected, es)
 	assert.Nil(t, err)
 	h.AssertNumberOfCalls(t, "Get", 1)
 }

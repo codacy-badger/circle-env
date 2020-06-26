@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"fmt"
+
 	"github.com/kou-pg-0131/circle-env/src/interfaces/gateways"
 	"github.com/kou-pg-0131/circle-env/src/interfaces/presenters"
 	"github.com/kou-pg-0131/circle-env/src/usecases"
@@ -10,11 +12,11 @@ type EnvsController struct {
 	usecase usecases.IEnvsUsecase
 }
 
-func NewEnvsController(c gateways.IAPIClient, d gateways.IDotenv) *EnvsController {
+func NewEnvsController(c gateways.IAPIClient, fs gateways.IFileSystem, d gateways.IDotenv) *EnvsController {
 	return &EnvsController{
 		usecase: usecases.NewEnvsUsecase(&usecases.EnvsUsecaseOption{
-			EnvsRepository:   gateways.NewEnvsRepository(c, d),
-			ConfigRepository: gateways.NewConfigRepository(),
+			EnvsRepository:   gateways.NewEnvsRepository(c, fs, d),
+			ConfigRepository: gateways.NewConfigRepository(fs),
 		}),
 	}
 }
@@ -25,11 +27,12 @@ func (c *EnvsController) Show(j bool) error {
 		return err
 	}
 
-	p := presenters.NewEnvsPresenter(j)
-	if err := p.Print(es); err != nil {
+	s, err := presenters.NewEnvsPresenter(j).String(es)
+	if err != nil {
 		return err
 	}
 
+	fmt.Println(s)
 	return nil
 }
 

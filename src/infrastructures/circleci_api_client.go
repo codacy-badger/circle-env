@@ -52,6 +52,7 @@ func (c *CircleCIAPIClient) GetEnvs(cfg *domain.Config) (*domain.Envs, error) {
 		return nil, err
 	}
 
+	es.Sort()
 	return es, nil
 }
 

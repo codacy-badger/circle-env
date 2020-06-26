@@ -31,12 +31,13 @@ func (u *ConfigUsecase) Initialize() error {
 			return err
 		}
 
-		if (domain.VCS)(s).IsValid() {
-			vcs = (domain.VCS)(s)
+		v, err := domain.VCSFromString(s)
+		if err == nil {
+			vcs = v
 			break
 		}
 
-		fmt.Println("Please enter `github` or `bitbucket`.")
+		fmt.Println("please enter `github` or `bitbucket`.")
 	}
 
 	fmt.Print("User: ")

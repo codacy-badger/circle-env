@@ -1,5 +1,7 @@
 package domain
 
+import "errors"
+
 type VCS string
 
 const (
@@ -7,11 +9,11 @@ const (
 	BitBucket     = "bitbucket"
 )
 
-func (v VCS) IsValid() bool {
-	switch v {
-	case GitHub, BitBucket:
-		return true
+func VCSFromString(s string) (VCS, error) {
+	switch s {
+	case "github", "bitbucket":
+		return (VCS)(s), nil
 	default:
-		return false
+		return "", errors.New("invalid vcs type")
 	}
 }
