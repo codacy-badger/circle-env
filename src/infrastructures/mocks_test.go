@@ -4,21 +4,21 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type mockHttpClient struct {
+type mockHTTPClient struct {
 	mock.Mock
 }
 
-func (m *mockHttpClient) Get(url string, header map[string]string) (*HttpResponse, error) {
+func (m *mockHTTPClient) Get(url string, header map[string]string) (*HTTPResponse, error) {
 	args := m.Called(url, header)
-	return args.Get(0).(*HttpResponse), args.Error(1)
+	return args.Get(0).(*HTTPResponse), args.Error(1)
 }
 
-func (m *mockHttpClient) Post(url string, header map[string]string, body []byte) (*HttpResponse, error) {
+func (m *mockHTTPClient) Post(url string, header map[string]string, body []byte) (*HTTPResponse, error) {
 	args := m.Called(url, header, body)
-	return args.Get(0).(*HttpResponse), args.Error(1)
+	return args.Get(0).(*HTTPResponse), args.Error(1)
 }
 
-func (m *mockHttpClient) Delete(url string, header map[string]string) (*HttpResponse, error) {
+func (m *mockHTTPClient) Delete(url string, header map[string]string) (*HTTPResponse, error) {
 	args := m.Called(url, header)
-	return args.Get(0).(*HttpResponse), args.Error(1)
+	return args.Get(0).(*HTTPResponse), args.Error(1)
 }

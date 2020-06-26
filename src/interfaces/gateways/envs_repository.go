@@ -7,19 +7,23 @@ import (
 )
 
 const (
+	// DotenvPath ...
 	DotenvPath string = ".circle-env/.env"
 )
 
+// EnvsRepository ...
 type EnvsRepository struct {
 	fs        IFileSystem
 	dotenv    IDotenv
 	apiClient IAPIClient
 }
 
+// NewEnvsRepository ...
 func NewEnvsRepository(c IAPIClient, fs IFileSystem, d IDotenv) *EnvsRepository {
 	return &EnvsRepository{apiClient: c, fs: fs, dotenv: d}
 }
 
+// All ...
 func (r *EnvsRepository) All(cfg *domain.Config) (*domain.Envs, error) {
 	es, err := r.apiClient.GetEnvs(cfg)
 	if err != nil {
@@ -29,6 +33,7 @@ func (r *EnvsRepository) All(cfg *domain.Config) (*domain.Envs, error) {
 	return es, nil
 }
 
+// Load ...
 func (r *EnvsRepository) Load() (*domain.Envs, error) {
 	if !r.fs.IsExists(DotenvPath) {
 		return nil, fmt.Errorf("`%s` not found", DotenvPath)
@@ -49,10 +54,12 @@ func (r *EnvsRepository) Load() (*domain.Envs, error) {
 	return es, nil
 }
 
+// Save ...
 func (r *EnvsRepository) Save(cfg *domain.Config, e *domain.Env) error {
 	return r.apiClient.CreateEnv(cfg, e)
 }
 
+// Delete ...
 func (r *EnvsRepository) Delete(cfg *domain.Config, name string) error {
 	return r.apiClient.DeleteEnv(cfg, name)
 }

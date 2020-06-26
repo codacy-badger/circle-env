@@ -8,21 +8,25 @@ import (
 	"github.com/kou-pg-0131/circle-env/src/utils"
 )
 
+// IEnvsUsecase ...
 type IEnvsUsecase interface {
 	ShowAll() (*domain.Envs, error)
 	Sync(del, noconf bool) error
 }
 
+// EnvsUsecase ...
 type EnvsUsecase struct {
 	envsRepository   IEnvsRepository
 	configRepository IConfigRepository
 }
 
+// EnvsUsecaseOption ...
 type EnvsUsecaseOption struct {
 	EnvsRepository   IEnvsRepository
 	ConfigRepository IConfigRepository
 }
 
+// NewEnvsUsecase ...
 func NewEnvsUsecase(opt *EnvsUsecaseOption) *EnvsUsecase {
 	return &EnvsUsecase{
 		envsRepository:   opt.EnvsRepository,
@@ -30,6 +34,7 @@ func NewEnvsUsecase(opt *EnvsUsecaseOption) *EnvsUsecase {
 	}
 }
 
+// ShowAll ...
 func (u *EnvsUsecase) ShowAll() (*domain.Envs, error) {
 	cfg, err := u.configRepository.Get()
 	if err != nil {
@@ -44,6 +49,7 @@ func (u *EnvsUsecase) ShowAll() (*domain.Envs, error) {
 	return es, nil
 }
 
+// Sync ...
 func (u *EnvsUsecase) Sync(del, noconf bool) error {
 	cfg, err := u.configRepository.Get()
 	if err != nil {

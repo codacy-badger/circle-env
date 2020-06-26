@@ -9,18 +9,21 @@ import (
 	"github.com/kou-pg-0131/circle-env/src/domain"
 )
 
+// IEnvsPresenter ...
 type IEnvsPresenter interface {
 	String(es *domain.Envs) (string, error)
 }
 
+// PlainEnvsPresenter ...
 type PlainEnvsPresenter struct{}
 
+// NewEnvsPresenter ...
 func NewEnvsPresenter(j bool) IEnvsPresenter {
 	if j {
 		return new(JSONEnvsPresenter)
-	} else {
-		return new(PlainEnvsPresenter)
 	}
+
+	return new(PlainEnvsPresenter)
 }
 
 func (p *PlainEnvsPresenter) String(es *domain.Envs) (string, error) {
@@ -36,6 +39,7 @@ func (p *PlainEnvsPresenter) String(es *domain.Envs) (string, error) {
 	return strings.Join(ss, "\n"), nil
 }
 
+// JSONEnvsPresenter ...
 type JSONEnvsPresenter struct{}
 
 func (p *JSONEnvsPresenter) String(es *domain.Envs) (string, error) {

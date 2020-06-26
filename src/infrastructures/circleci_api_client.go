@@ -8,17 +8,19 @@ import (
 	"github.com/kou-pg-0131/circle-env/src/domain"
 )
 
+// CircleCIAPIClient ...
 type CircleCIAPIClient struct {
-	httpClient IHttpClient
+	httpClient IHTTPClient
 }
 
+// NewCircleCIAPIClient ...
 func NewCircleCIAPIClient() *CircleCIAPIClient {
 	return &CircleCIAPIClient{
-		httpClient: NewHttpClient(),
+		httpClient: NewHTTPClient(),
 	}
 }
 
-func (c *CircleCIAPIClient) handleRequestError(res *HttpResponse, cfg *domain.Config) error {
+func (c *CircleCIAPIClient) handleRequestError(res *HTTPResponse, cfg *domain.Config) error {
 	switch res.StatusCode {
 	case 200, 201:
 		return nil
@@ -31,6 +33,7 @@ func (c *CircleCIAPIClient) handleRequestError(res *HttpResponse, cfg *domain.Co
 	}
 }
 
+// GetEnvs ...
 func (c *CircleCIAPIClient) GetEnvs(cfg *domain.Config) (*domain.Envs, error) {
 	url := fmt.Sprintf(
 		"https://circleci.com/api/v1.1/project/%s/envvar?circle-token=%s",
@@ -56,6 +59,7 @@ func (c *CircleCIAPIClient) GetEnvs(cfg *domain.Config) (*domain.Envs, error) {
 	return es, nil
 }
 
+// CreateEnv ...
 func (c *CircleCIAPIClient) CreateEnv(cfg *domain.Config, e *domain.Env) error {
 	url := fmt.Sprintf(
 		"https://circleci.com/api/v1.1/project/%s/envvar?circle-token=%s",
@@ -80,6 +84,7 @@ func (c *CircleCIAPIClient) CreateEnv(cfg *domain.Config, e *domain.Env) error {
 	return nil
 }
 
+// DeleteEnv ...
 func (c *CircleCIAPIClient) DeleteEnv(cfg *domain.Config, name string) error {
 	url := fmt.Sprintf(
 		"https://circleci.com/api/v1.1/project/%s/envvar/%s?circle-token=%s",

@@ -10,19 +10,25 @@ import (
 )
 
 const (
-	DirPath    string = ".circle-env"
+	// DirPath ...
+	DirPath string = ".circle-env"
+	// ConfigPath ...
 	ConfigPath string = ".circle-env/config"
-	TokenPath  string = ".circle-env/circle-token"
+	// TokenPath ...
+	TokenPath string = ".circle-env/circle-token"
 )
 
+// ConfigRepository ...
 type ConfigRepository struct {
 	fs IFileSystem
 }
 
+// NewConfigRepository ...
 func NewConfigRepository(fs IFileSystem) *ConfigRepository {
 	return &ConfigRepository{fs: fs}
 }
 
+// Save ...
 func (r *ConfigRepository) Save(cfg *domain.Config) error {
 	if err := r.fs.Mkdir(DirPath); err != nil {
 		return err
@@ -54,6 +60,7 @@ func (r *ConfigRepository) Save(cfg *domain.Config) error {
 	return nil
 }
 
+// Get ...
 func (r *ConfigRepository) Get() (*domain.Config, error) {
 	if !r.fs.IsExists(ConfigPath) {
 		return nil, fmt.Errorf("`%s` not found, run `circle-env init`", ConfigPath)
@@ -63,7 +70,7 @@ func (r *ConfigRepository) Get() (*domain.Config, error) {
 		return nil, fmt.Errorf("`%s` not found, run `circle-env init`", TokenPath)
 	}
 
-	cbs, err := r.fs.Read(ConfigPath)
+	cbs, err := r.fs.ReadFile(ConfigPath)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +86,7 @@ func (r *ConfigRepository) Get() (*domain.Config, error) {
 		return nil, fmt.Errorf("`%s` is invalid vcs type, please check `%s`", v, ConfigPath)
 	}
 
-	tbs, err := r.fs.Read(TokenPath)
+	tbs, err := r.fs.ReadFile(TokenPath)
 	if err != nil {
 		return nil, err
 	}

@@ -188,8 +188,8 @@ func TestConfigRepository_Get_ReturnConfig(t *testing.T) {
 	fs := new(mockFileSystem)
 	fs.On("IsExists", ".circle-env/config").Return(true)
 	fs.On("IsExists", ".circle-env/circle-token").Return(true)
-	fs.On("Read", ".circle-env/config").Return([]byte("vcs = github\nuser = USER\nrepo = REPO"), nil)
-	fs.On("Read", ".circle-env/circle-token").Return([]byte("TOKEN"), nil)
+	fs.On("ReadFile", ".circle-env/config").Return([]byte("vcs = github\nuser = USER\nrepo = REPO"), nil)
+	fs.On("ReadFile", ".circle-env/circle-token").Return([]byte("TOKEN"), nil)
 
 	r := &ConfigRepository{fs: fs}
 
@@ -202,7 +202,7 @@ func TestConfigRepository_Get_ReturnConfig(t *testing.T) {
 	}, cfg)
 	assert.Nil(t, err)
 	fs.AssertNumberOfCalls(t, "IsExists", 2)
-	fs.AssertNumberOfCalls(t, "Read", 2)
+	fs.AssertNumberOfCalls(t, "ReadFile", 2)
 }
 
 func TestConfigRepository_Get_ReturnErrorWhenConfigFileNotFound(t *testing.T) {
@@ -234,7 +234,7 @@ func TestConfigRepository_Get_ReturnErrorWhenReadConfigFileFailed(t *testing.T) 
 	fs := new(mockFileSystem)
 	fs.On("IsExists", ".circle-env/config").Return(true)
 	fs.On("IsExists", ".circle-env/circle-token").Return(true)
-	fs.On("Read", ".circle-env/config").Return(([]byte)(nil), errors.New("SOMETHING_WRONG"))
+	fs.On("ReadFile", ".circle-env/config").Return(([]byte)(nil), errors.New("SOMETHING_WRONG"))
 
 	r := &ConfigRepository{fs: fs}
 
@@ -242,14 +242,14 @@ func TestConfigRepository_Get_ReturnErrorWhenReadConfigFileFailed(t *testing.T) 
 	assert.EqualError(t, err, "SOMETHING_WRONG")
 	assert.Nil(t, cfg)
 	fs.AssertNumberOfCalls(t, "IsExists", 2)
-	fs.AssertNumberOfCalls(t, "Read", 1)
+	fs.AssertNumberOfCalls(t, "ReadFile", 1)
 }
 
 func TestConfigRepository_Get_ReturnErrorWhenLoadConfigFileFailed(t *testing.T) {
 	fs := new(mockFileSystem)
 	fs.On("IsExists", ".circle-env/config").Return(true)
 	fs.On("IsExists", ".circle-env/circle-token").Return(true)
-	fs.On("Read", ".circle-env/config").Return([]byte("invalid_ini"), nil)
+	fs.On("ReadFile", ".circle-env/config").Return([]byte("invalid_ini"), nil)
 
 	r := &ConfigRepository{fs: fs}
 
@@ -257,14 +257,14 @@ func TestConfigRepository_Get_ReturnErrorWhenLoadConfigFileFailed(t *testing.T) 
 	assert.NotNil(t, err)
 	assert.Nil(t, cfg)
 	fs.AssertNumberOfCalls(t, "IsExists", 2)
-	fs.AssertNumberOfCalls(t, "Read", 1)
+	fs.AssertNumberOfCalls(t, "ReadFile", 1)
 }
 
 func TestConfigRepository_Get_ReturnErrorWhenInvalidVCSType(t *testing.T) {
 	fs := new(mockFileSystem)
 	fs.On("IsExists", ".circle-env/config").Return(true)
 	fs.On("IsExists", ".circle-env/circle-token").Return(true)
-	fs.On("Read", ".circle-env/config").Return([]byte("vcs = invalid_vcs\nuser = USER\nrepo = REPO"), nil)
+	fs.On("ReadFile", ".circle-env/config").Return([]byte("vcs = invalid_vcs\nuser = USER\nrepo = REPO"), nil)
 
 	r := &ConfigRepository{fs: fs}
 
@@ -272,15 +272,15 @@ func TestConfigRepository_Get_ReturnErrorWhenInvalidVCSType(t *testing.T) {
 	assert.EqualError(t, err, "`invalid_vcs` is invalid vcs type, please check `.circle-env/config`")
 	assert.Nil(t, cfg)
 	fs.AssertNumberOfCalls(t, "IsExists", 2)
-	fs.AssertNumberOfCalls(t, "Read", 1)
+	fs.AssertNumberOfCalls(t, "ReadFile", 1)
 }
 
 func TestConfigRepository_Get_ReturnErrorWhenReadTokenFileFailed(t *testing.T) {
 	fs := new(mockFileSystem)
 	fs.On("IsExists", ".circle-env/config").Return(true)
 	fs.On("IsExists", ".circle-env/circle-token").Return(true)
-	fs.On("Read", ".circle-env/config").Return([]byte("vcs = github\nuser = USER\nrepo = REPO"), nil)
-	fs.On("Read", ".circle-env/circle-token").Return(([]byte)(nil), errors.New("SOMETHING_WRONG"))
+	fs.On("ReadFile", ".circle-env/config").Return([]byte("vcs = github\nuser = USER\nrepo = REPO"), nil)
+	fs.On("ReadFile", ".circle-env/circle-token").Return(([]byte)(nil), errors.New("SOMETHING_WRONG"))
 
 	r := &ConfigRepository{fs: fs}
 
@@ -288,5 +288,5 @@ func TestConfigRepository_Get_ReturnErrorWhenReadTokenFileFailed(t *testing.T) {
 	assert.EqualError(t, err, "SOMETHING_WRONG")
 	assert.Nil(t, cfg)
 	fs.AssertNumberOfCalls(t, "IsExists", 2)
-	fs.AssertNumberOfCalls(t, "Read", 2)
+	fs.AssertNumberOfCalls(t, "ReadFile", 2)
 }

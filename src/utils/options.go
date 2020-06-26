@@ -5,12 +5,16 @@ import (
 	"os"
 )
 
+// Command ...
 type Command string
 
 const (
+	// Init ...
 	Init Command = "init"
-	Show         = "show"
-	Sync         = "sync"
+	// Show ...
+	Show = "show"
+	// Sync ...
+	Sync = "sync"
 )
 
 func commandFromString(s string) (Command, error) {
@@ -22,7 +26,8 @@ func commandFromString(s string) (Command, error) {
 	}
 }
 
-type options struct {
+// Options ...
+type Options struct {
 	Help      bool
 	Version   bool
 	Command   Command
@@ -31,9 +36,10 @@ type options struct {
 	NoConfirm bool
 }
 
-func NewOptions() *options {
+// NewOptions ...
+func NewOptions() *Options {
 	args := os.Args
-	opts := new(options)
+	opts := new(Options)
 
 	if len(args) < 2 {
 		PrintUsage()

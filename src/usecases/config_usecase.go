@@ -7,20 +7,24 @@ import (
 	"github.com/kou-pg-0131/circle-env/src/utils"
 )
 
+// IConfigUsecase ...
 type IConfigUsecase interface {
 	Initialize() error
 }
 
+// ConfigUsecase ...
 type ConfigUsecase struct {
 	repository IConfigRepository
 }
 
+// NewConfigUsecase ...
 func NewConfigUsecase(r IConfigRepository) *ConfigUsecase {
 	return &ConfigUsecase{
 		repository: r,
 	}
 }
 
+// Initialize ...
 func (u *ConfigUsecase) Initialize() error {
 	var vcs domain.VCS
 

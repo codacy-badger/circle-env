@@ -12,6 +12,7 @@ const (
 
 type usage struct{}
 
+// PrintUsage ...
 func PrintUsage(cmd ...Command) {
 	if cmd == nil {
 		printBasicUsage()

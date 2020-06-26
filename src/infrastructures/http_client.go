@@ -6,28 +6,32 @@ import (
 	"net/http"
 )
 
-type IHttpClient interface {
-	Get(url string, header map[string]string) (*HttpResponse, error)
-	Post(url string, header map[string]string, body []byte) (*HttpResponse, error)
-	Delete(url string, header map[string]string) (*HttpResponse, error)
+// IHTTPClient ...
+type IHTTPClient interface {
+	Get(url string, header map[string]string) (*HTTPResponse, error)
+	Post(url string, header map[string]string, body []byte) (*HTTPResponse, error)
+	Delete(url string, header map[string]string) (*HTTPResponse, error)
 }
 
-type HttpResponse struct {
+// HTTPResponse ...
+type HTTPResponse struct {
 	Body       []byte
 	StatusCode int
 }
 
-type HttpClient struct {
-	http_Client_Do func(req *http.Request) (*http.Response, error)
+// HTTPClient ...
+type HTTPClient struct {
+	send func(req *http.Request) (*http.Response, error)
 }
 
-func NewHttpClient() *HttpClient {
-	return &HttpClient{
-		http_Client_Do: new(http.Client).Do,
+// NewHTTPClient ...
+func NewHTTPClient() *HTTPClient {
+	return &HTTPClient{
+		send: new(http.Client).Do,
 	}
 }
 
-func (c *HttpClient) request(m, url string, header map[string]string, body []byte) (*HttpResponse, error) {
+func (c *HTTPClient) request(m, url string, header map[string]string, body []byte) (*HTTPResponse, error) {
 	req, err := http.NewRequest(m, url, bytes.NewBuffer(body))
 	if err != nil {
 		return nil, err
@@ -39,7 +43,7 @@ func (c *HttpClient) request(m, url string, header map[string]string, body []byt
 		}
 	}
 
-	res, err := c.http_Client_Do(req)
+	res, err := c.send(req)
 	if err != nil {
 		return nil, err
 	}
@@ -50,20 +54,23 @@ func (c *HttpClient) request(m, url string, header map[string]string, body []byt
 		return nil, err
 	}
 
-	return &HttpResponse{
+	return &HTTPResponse{
 		Body:       bs,
 		StatusCode: res.StatusCode,
 	}, nil
 }
 
-func (c *HttpClient) Get(url string, header map[string]string) (*HttpResponse, error) {
+// Get ...
+func (c *HTTPClient) Get(url string, header map[string]string) (*HTTPResponse, error) {
 	return c.request("GET", url, header, nil)
 }
 
-func (c *HttpClient) Post(url string, header map[string]string, body []byte) (*HttpResponse, error) {
+// Post ...
+func (c *HTTPClient) Post(url string, header map[string]string, body []byte) (*HTTPResponse, error) {
 	return c.request("POST", url, header, body)
 }
 
-func (c *HttpClient) Delete(url string, header map[string]string) (*HttpResponse, error) {
+// Delete ...
+func (c *HTTPClient) Delete(url string, header map[string]string) (*HTTPResponse, error) {
 	return c.request("DELETE", url, header, nil)
 }

@@ -2,13 +2,16 @@ package domain
 
 import "sort"
 
+// Env ...
 type Env struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
 }
 
+// Envs ...
 type Envs []*Env
 
+// Has ...
 func (es *Envs) Has(name string) bool {
 	for _, e := range *es {
 		if name == e.Name {
@@ -19,6 +22,7 @@ func (es *Envs) Has(name string) bool {
 	return false
 }
 
+// Get ...
 func (es *Envs) Get(name string) *Env {
 	for _, e := range *es {
 		if name == e.Name {
@@ -29,10 +33,12 @@ func (es *Envs) Get(name string) *Env {
 	return nil
 }
 
+// Sort ...
 func (es *Envs) Sort() {
 	sort.SliceStable(*es, func(i, j int) bool { return (*es)[i].Name < (*es)[j].Name })
 }
 
+// Compare ...
 func (es *Envs) Compare(comp *Envs, del bool) *Diffs {
 	ds := new(Diffs)
 

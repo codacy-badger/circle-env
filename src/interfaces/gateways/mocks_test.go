@@ -37,7 +37,7 @@ type mockFileSystem struct {
 	mock.Mock
 }
 
-func (m *mockFileSystem) Read(path string) ([]byte, error) {
+func (m *mockFileSystem) ReadFile(path string) ([]byte, error) {
 	args := m.Called(path)
 	return args.Get(0).([]byte), args.Error(1)
 }

@@ -6,12 +6,14 @@ import (
 	"strings"
 )
 
+// IScanner ...
 type IScanner interface {
 	Scan() (string, error)
 }
 
 type scanner struct{}
 
+// Scanner ...
 var Scanner = new(scanner)
 
 func (s *scanner) Scan() (string, error) {

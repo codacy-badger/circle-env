@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// Config ...
 type Config struct {
 	VCS   VCS
 	User  string
@@ -12,6 +13,7 @@ type Config struct {
 	Token string
 }
 
+// Ini ...
 func (c *Config) Ini() string {
 	return strings.Join([]string{
 		fmt.Sprintf("vcs = %s", c.VCS),
@@ -20,6 +22,7 @@ func (c *Config) Ini() string {
 	}, "\n")
 }
 
+// Slug ...
 func (c *Config) Slug() string {
 	return fmt.Sprintf("%s/%s/%s", c.VCS, c.User, c.Repo)
 }
