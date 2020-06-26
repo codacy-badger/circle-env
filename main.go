@@ -45,7 +45,7 @@ func main() {
 			fatal(err)
 		}
 	case utils.Sync:
-		if err := ec.Sync(opts.Delete); err != nil {
+		if err := ec.Sync(opts.Delete, opts.NoConfirm); err != nil {
 			fatal(err)
 		}
 	default:

@@ -23,11 +23,12 @@ func commandFromString(s string) (Command, error) {
 }
 
 type options struct {
-	Help    bool
-	Version bool
-	Command Command
-	JSON    bool
-	Delete  bool
+	Help      bool
+	Version   bool
+	Command   Command
+	JSON      bool
+	Delete    bool
+	NoConfirm bool
 }
 
 func NewOptions() *options {
@@ -53,6 +54,8 @@ func NewOptions() *options {
 			opts.JSON = true
 		case "--delete":
 			opts.Delete = true
+		case "--no-confirm":
+			opts.NoConfirm = true
 		}
 	}
 

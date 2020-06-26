@@ -37,7 +37,7 @@ func (u *ConfigUsecase) Initialize() error {
 			break
 		}
 
-		fmt.Println("please enter `github` or `bitbucket`.")
+		fmt.Println("Please enter `github` or `bitbucket`.")
 	}
 
 	fmt.Print("User: ")

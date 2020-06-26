@@ -10,7 +10,7 @@ import (
 
 type IEnvsUsecase interface {
 	ShowAll() (*domain.Envs, error)
-	Sync(del bool) error
+	Sync(del, noconf bool) error
 }
 
 type EnvsUsecase struct {
@@ -44,7 +44,7 @@ func (u *EnvsUsecase) ShowAll() (*domain.Envs, error) {
 	return es, nil
 }
 
-func (u *EnvsUsecase) Sync(del bool) error {
+func (u *EnvsUsecase) Sync(del, noconf bool) error {
 	cfg, err := u.configRepository.Get()
 	if err != nil {
 		return err
@@ -88,12 +88,14 @@ func (u *EnvsUsecase) Sync(del bool) error {
 	}
 
 	fmt.Println("")
-	yes, err := utils.Confirm(utils.Colorf("Continue?(yes/no): ").Bold().String())
-	if err != nil {
-		return err
-	}
-	if !yes {
-		return errors.New("cancelled")
+	if !noconf {
+		yes, err := utils.Confirm(utils.Colorf("Continue?(yes/no): ").Bold().String())
+		if err != nil {
+			return err
+		}
+		if !yes {
+			return errors.New("cancelled")
+		}
 	}
 
 	for _, d := range *ds {
@@ -104,7 +106,7 @@ func (u *EnvsUsecase) Sync(del bool) error {
 				return err
 			}
 		case domain.Changed:
-			fmt.Printf("Modifying `%s`...\n", d.Name)
+			fmt.Printf("Saving `%s`...\n", d.Name)
 			if err := u.envsRepository.Save(cfg, &domain.Env{Name: d.Name, Value: d.After}); err != nil {
 				return err
 			}
