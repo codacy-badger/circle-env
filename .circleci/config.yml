@@ -19,13 +19,13 @@ jobs:
           name: golint
           command: |
             go get -u golang.org/x/lint/golint
-            golint -set_exit_status ./src/...
+            golint -set_exit_status ./...
       - run:
           name: go vet
-          command: go vet ./src/...
+          command: go vet ./...
       - run:
           name: go test
-          command: go test ./src/... -coverpkg ./src/... -coverprofile cover.out
+          command: go test ./... -coverpkg ./... -coverprofile cover.out
       - run:
           name: report coverage to codecov
           command: bash -c "bash <(curl -s https://codecov.io/bash)"

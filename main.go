@@ -10,51 +10,78 @@ import (
 )
 
 func main() {
-	/*
-	 * args
-	 */
+	app := NewApp()
+	code, err := app.Run(os.Args[1:])
+	if err != nil {
+		app.PrintError(err)
+	}
 
-	opts := utils.NewOptions()
+	os.Exit(code)
+}
 
-	/*
-	 * infrastructures
-	 */
+// IApp ...
+type IApp interface {
+	Run(args []string) (int, error)
+	PrintError(err error)
+}
 
+// App ...
+type App struct {
+	configController controllers.IConfigController
+	envsController   controllers.IEnvsController
+}
+
+// NewApp ...
+func NewApp() *App {
 	fs := infrastructures.NewFileSystem()
 	api := infrastructures.NewCircleCIAPIClient()
 	de := infrastructures.NewDotenv()
 
-	/*
-	 * controllers
-	 */
-
-	cc := controllers.NewConfigController(fs)
-	ec := controllers.NewEnvsController(api, fs, de)
-
-	/*
-	 * commands
-	 */
-
-	switch opts.Command {
-	case utils.Init:
-		if err := cc.Initialize(); err != nil {
-			fatal(err)
-		}
-	case utils.Show:
-		if err := ec.Show(opts.JSON); err != nil {
-			fatal(err)
-		}
-	case utils.Sync:
-		if err := ec.Sync(opts.Delete, opts.NoConfirm); err != nil {
-			fatal(err)
-		}
-	default:
-		utils.PrintUsage()
-		os.Exit(1)
+	return &App{
+		configController: controllers.NewConfigController(fs),
+		envsController:   controllers.NewEnvsController(api, fs, de),
 	}
 }
 
-func fatal(err error) {
+// Run ...
+func (a *App) Run(args []string) (int, error) {
+	opts := utils.NewOptions(args)
+
+	if opts.Help {
+		utils.PrintUsage(opts.Command)
+		return 1, nil
+	}
+
+	if opts.Version {
+		fmt.Println(utils.VERSION)
+		return 0, nil
+	}
+
+	switch opts.Command {
+	case utils.Init:
+		if err := a.configController.Initialize(); err != nil {
+			a.PrintError(err)
+			return 1, err
+		}
+	case utils.Show:
+		if err := a.envsController.Show(opts.JSON); err != nil {
+			a.PrintError(err)
+			return 1, err
+		}
+	case utils.Sync:
+		if err := a.envsController.Sync(opts.Delete, opts.NoConfirm); err != nil {
+			a.PrintError(err)
+			return 1, err
+		}
+	default:
+		utils.PrintUsage()
+		return 1, nil
+	}
+
+	return 0, nil
+}
+
+// PrintError ...
+func (a *App) PrintError(err error) {
 	fmt.Println("Error:", err)
-	os.Exit(1)
 }

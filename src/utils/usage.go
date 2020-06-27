@@ -10,8 +10,6 @@ const (
 	syncDescription = "Syncs the value of `.circle-env/.env` with the environment variables of the circleci project."
 )
 
-type usage struct{}
-
 // PrintUsage ...
 func PrintUsage(cmd ...Command) {
 	if cmd == nil {

@@ -8,6 +8,12 @@ import (
 	"github.com/kou-pg-0131/circle-env/src/usecases"
 )
 
+// IEnvsController ...
+type IEnvsController interface {
+	Show(j bool) error
+	Sync(del, noconf bool) error
+}
+
 // EnvsController ...
 type EnvsController struct {
 	usecase usecases.IEnvsUsecase

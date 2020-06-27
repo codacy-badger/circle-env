@@ -2,7 +2,6 @@ package utils
 
 import (
 	"errors"
-	"os"
 )
 
 // Command ...
@@ -37,13 +36,12 @@ type Options struct {
 }
 
 // NewOptions ...
-func NewOptions() *Options {
-	args := os.Args
+func NewOptions(args []string) *Options {
 	opts := new(Options)
 
-	if len(args) < 2 {
-		PrintUsage()
-		os.Exit(1)
+	if len(args) == 0 {
+		opts.Help = true
+		return opts
 	}
 
 	for _, arg := range args {
@@ -66,22 +64,15 @@ func NewOptions() *Options {
 	}
 
 	if opts.Version {
-		PrintVersion()
-		os.Exit(0)
+		return opts
 	}
 
-	cmd, err := commandFromString(args[1])
+	cmd, err := commandFromString(args[0])
 	if err != nil {
-		PrintUsage()
-		os.Exit(1)
+		opts.Help = true
+		return opts
 	}
-
 	opts.Command = cmd
-
-	if opts.Help {
-		PrintUsage(opts.Command)
-		os.Exit(1)
-	}
 
 	return opts
 }
